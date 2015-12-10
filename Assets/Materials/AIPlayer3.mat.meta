@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 93a296f3da7a0413a8d1ef7c23784d54
 timeCreated: 1449683873
+=======
+guid: 58a7d1fd51ecaf547a3441d0351c1318
+timeCreated: 1449720482
+>>>>>>> zhangjk95/master
 licenseType: Free
 NativeFormatImporter:
   userData: 
