@@ -36,20 +36,25 @@ public class AIController : Controller {
         }
 
 		IsTargetBallsinVision = false;
-		BallManager Persue, Escape;
-		Persue = Escape = null;
+		List<BallManager> Preyers = new List<BallManager>(), Preys = new List<BallManager>();
+		bool Escape, Persue;
+		Persue = Escape = false;
 		foreach (var otherball in otherballs) {
 			if (Vector3.Distance (otherball.position, SmallestBall.position) < AIVisionField) {
 				if (otherball.size > SmallestBall.size) {
-					Escape = otherball;
+					Preyers.Add(otherball);
+					Escape = true;
 					IsTargetBallsinVision = true;
-					break;
 				}
 			}
 		}
 
 		if (Escape) {
-			Move ((SmallestBall.position - Escape.position) * 5, 100f);
+			Vector3 EscapeDirection = new Vector3(0, 0, 0);
+			foreach (var Preyer in Preyers) {
+				EscapeDirection += (Preyer.position - SmallestBall.position) * 3;
+			}
+			Move (-EscapeDirection, 100f);
 		}
 
 		else  {
@@ -58,17 +63,18 @@ public class AIController : Controller {
 				Temp_Distance = Vector3.Distance (otherball.position, SmallestBall.position);
 				if (Temp_Distance < AIVisionField && otherball.size < SmallestBall.size && Temp_Distance < MinDistance) {
 					MinDistance = Temp_Distance;
-					Persue = otherball;
+					Persue = true;
+					Preys.Add(otherball);
 					IsTargetBallsinVision = true;
 				}
 			}
 			if (Persue) {
-				Move (Persue.position, 100f);
-				if(Persue.size < SmallestBall.size/2) {
-					if(Vector3.Distance(Persue.position, SmallestBall.position) < SplitRange) {
+				Move (Preys.First().position, 100f);
+				if(Preys.First().size < SmallestBall.size/2) {
+					if(Vector3.Distance(Preys.First().position, SmallestBall.position) < SplitRange) {
 						AIJudgeTimer += Time.deltaTime;
 						if(AIJudgeTimer > AIJudgeTime) {
-							Split (Persue.position);
+							Split (Preys.First().position);
 							AIJudgeTimer = 0;
 						}
 					}
@@ -86,7 +92,6 @@ public class AIController : Controller {
 						IsPickUpinVision = true;
 					}
 				}
-				
 			}
 		}
 
